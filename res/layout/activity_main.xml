@@ -27,4 +27,26 @@
         android:layout_marginLeft="26dp"
         android:text="TextView" />
 
+    <EditText
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="26dp"
+        android:ems="10"
+        android:hint="IP Address" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/textView3"
+        android:onClick="setIP"
+        android:text="Set IP" />
+
 </RelativeLayout>

@@ -26,15 +26,16 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity{
 	private static String myTagId="-";
 	private static String biteTagId="-";
-	public static String URL = ("http://192.168.0.109:8080/ServletTest/Bite"); 
-	static Button button1, button2; 
-	static TextView outputText1, outputText2;
+	private static String ipAdd="192.168.1.236";
+	static Button button1; 
+	static TextView outputText1, outputText2, ipView;
 	private static NfcAdapter mNfcAdapter;
 	final protected static char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 	
@@ -45,23 +46,19 @@ public class MainActivity extends Activity{
 		         
 			 //String type = intent.getType();
 			 Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-			 try{
-				 if(myTagId=="-"){
-					 myTagId=byteArrayToString(tag.getId());
-					 GetXMLTask task = new GetXMLTask();
-					 task.execute(new String[] { URL +"?param1="+myTagId+"&param2="+biteTagId});
-				 	 Toast.makeText(this, "Your id set to: "+myTagId, Toast.LENGTH_LONG).show();
-			 	 }
-				 else if(myTagId!=byteArrayToString(tag.getId())){
-					 biteTagId=byteArrayToString(tag.getId());
-					 GetXMLTask task = new GetXMLTask();
-					 Toast.makeText(this, "You bit id: "+biteTagId, Toast.LENGTH_LONG).show();
-					 task.execute(new String[] { URL +"?param1="+myTagId+"&param2="+biteTagId});
-				 }
+			
+			 if(myTagId.equals("-")){
+				 myTagId=byteArrayToString(tag.getId());
+				 GetXMLTask task = new GetXMLTask();
+				 task.execute(new String[] { "http://"+ipAdd+":8080/ServletTest/Bite" +"?param1="+myTagId+"&param2="+biteTagId});
+			 	 Toast.makeText(this, "Your id set to: "+myTagId, Toast.LENGTH_LONG).show();
 			 }
-			 catch (Exception e){
-				 System.out.println(e);
-			 }
+			 else {
+				 biteTagId=byteArrayToString(tag.getId());
+				 GetXMLTask task = new GetXMLTask();
+				 Toast.makeText(this, "You bit id: "+biteTagId, Toast.LENGTH_LONG).show();
+				 task.execute(new String[] { "http://"+ipAdd+":8080/ServletTest/Bite"  +"?param1="+myTagId+"&param2="+biteTagId});
+			 }	
 		 }
 	}
 	
@@ -88,6 +85,8 @@ public class MainActivity extends Activity{
 	private void findViewsById() { 
 	    outputText1 = (TextView) findViewById(R.id.textView1);
 	    outputText2 = (TextView) findViewById(R.id.textView2);
+	    button1 = (Button) findViewById(R.id.button1);
+	    ipView = (TextView) findViewById(R.id.textView3);
 
 	}
 	
@@ -95,9 +94,9 @@ public class MainActivity extends Activity{
 	    @Override
 	    protected String doInBackground(String... urls) {
 	        String output = null;
-	        for (String url : urls) {
-	            output = getOutputFromUrl(url);
-	        }
+		    for (String url : urls) {
+		        output = getOutputFromUrl(url);
+		    }
 	        return output;
 	    }
 	    private String getOutputFromUrl(String url) {
@@ -137,8 +136,16 @@ public class MainActivity extends Activity{
 	    protected void onPostExecute(String output) {
 	    	
 	    	String[] lines = output.split("-", 2);
-	        outputText1.setText("Your ID: "+lines[0]);
-	        outputText2.setText("Last ID bitten: "+lines[1]);
+	    	if(lines[0].equals("self bite"))
+	    		outputText1.setText("Yes, you're probably tasty, but don't bite yourself!");
+	    	else{
+		    	if(lines[1].equals("-")){
+			        outputText2.setText("Last ID bitten: "+lines[1]);
+		    	}
+		    	else	
+		    		outputText1.setText("Your ID: "+lines[0]);
+	    	}
+	    	
 	    }
 	}
 
@@ -148,16 +155,23 @@ public class MainActivity extends Activity{
 		setContentView(R.layout.activity_main);
 		mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		if (mNfcAdapter == null) {
-            // Stop here, we definitely need NFC
             Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
             finish();
             return;
  
         }
-     
-           
 		findViewsById();
+		
+		button1.setOnClickListener(new View.OnClickListener() {
+             public void onClick(View v) {
+                 setIP();
+             }
+		});
 	    handleIntent(getIntent());
+	}
+		
+	private static void setIP(){
+		ipAdd=ipView.getText().toString();
 	}
 	
 	public static void stopForegroundDispatch(final Activity activity, NfcAdapter adapter) {
