@@ -43,18 +43,24 @@ public class MainActivity extends Activity{
 		 String action = intent.getAction();
 		 if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
 		         
-			 String type = intent.getType();
+			 //String type = intent.getType();
 			 Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-			 
-			 if(myTagId=="-"){
-				 myTagId=byteArrayToString(tag.getId());
-			 	 Toast.makeText(this, "Your id set to: "+myTagId, Toast.LENGTH_LONG).show();
-		 	 }
-			 else{
-				 biteTagId=byteArrayToString(tag.getId());
-				 GetXMLTask task = new GetXMLTask();
-				 Toast.makeText(this, "You bit id: "+biteTagId, Toast.LENGTH_LONG).show();
-				 task.execute(new String[] { URL +"?param1="+myTagId+"&param2="+biteTagId});
+			 try{
+				 if(myTagId=="-"){
+					 myTagId=byteArrayToString(tag.getId());
+					 GetXMLTask task = new GetXMLTask();
+					 task.execute(new String[] { URL +"?param1="+myTagId+"&param2="+biteTagId});
+				 	 Toast.makeText(this, "Your id set to: "+myTagId, Toast.LENGTH_LONG).show();
+			 	 }
+				 else if(myTagId!=byteArrayToString(tag.getId())){
+					 biteTagId=byteArrayToString(tag.getId());
+					 GetXMLTask task = new GetXMLTask();
+					 Toast.makeText(this, "You bit id: "+biteTagId, Toast.LENGTH_LONG).show();
+					 task.execute(new String[] { URL +"?param1="+myTagId+"&param2="+biteTagId});
+				 }
+			 }
+			 catch (Exception e){
+				 System.out.println(e);
 			 }
 		 }
 	}
