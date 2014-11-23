@@ -8,12 +8,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import com.vw.mobile.R;
 
@@ -34,9 +37,11 @@ public class MainActivity extends Activity{
 	private static boolean first=true;
 	private static String myTagId="-";
 	private static String biteTagId="-";
-	private static String username;
+	private static String username="";
 	static TextView outputText1, outputText2, yousername;
 	static Button setusername;
+	static Button setToT;
+	static Button YOYO;
 	private static NfcAdapter mNfcAdapter;
 	final protected static char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 	
@@ -48,7 +53,7 @@ public class MainActivity extends Activity{
 			 //String type = intent.getType();
 			 Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 			
-			 if(myTagId.equals("-")){
+			 if(first){
 				 myTagId=byteArrayToString(tag.getId());
 			 	 Toast.makeText(this, "Your id set to: "+myTagId, Toast.LENGTH_LONG).show();
 			 }
@@ -90,6 +95,8 @@ public class MainActivity extends Activity{
 	    outputText2 = (TextView) findViewById(R.id.textView2);
 	    yousername = (TextView) findViewById(R.id.editText1);
 	    setusername = (Button) findViewById(R.id.button1);
+	    yousername.setText(username);
+	    setToT =  (Button) findViewById(R.id.setToTrue);
 	}
 	
 	private class GetXMLTask extends AsyncTask<String, Void, String> {
@@ -172,8 +179,17 @@ public class MainActivity extends Activity{
             }
         });
 		
+		setToT.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	first = true;
+            }
+        });
+		
+
+			
 	    handleIntent(getIntent());
 	}
+	
 		
 	
 	public static void stopForegroundDispatch(final Activity activity, NfcAdapter adapter) {
