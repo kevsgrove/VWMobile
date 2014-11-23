@@ -27,4 +27,27 @@
         android:layout_marginLeft="26dp"
         android:text="TextView" />
 
+    <EditText
+        android:id="@+id/editText1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="131dp"
+        android:ems="10"
+       	android:hint="lowercase!"
+         >
+        <requestFocus />
+
+    </EditText>
+
+    <Button
+        android:id="@+id/button1"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/editText1"
+        android:layout_alignParentRight="true"
+        android:text="Yo Name" />
+
 </RelativeLayout>

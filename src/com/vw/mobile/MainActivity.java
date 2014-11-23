@@ -31,9 +31,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity{
+	private static boolean first=true;
 	private static String myTagId="-";
 	private static String biteTagId="-";
-	static TextView outputText1, outputText2;
+	private static String username;
+	static TextView outputText1, outputText2, yousername;
+	static Button setusername;
 	private static NfcAdapter mNfcAdapter;
 	final protected static char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 	
@@ -54,7 +57,11 @@ public class MainActivity extends Activity{
 				 Toast.makeText(this, "You bit id: "+biteTagId, Toast.LENGTH_LONG).show();
 			 }	
 			 GetXMLTask task = new GetXMLTask();
-			 task.execute(new String[] { "http://yohack2014.cloudapp.net:8080/VWServlet/Bite" +"?param1="+myTagId+"&param2="+biteTagId});
+			 if(first){
+				 task.execute(new String[] { "http://yohack2014.cloudapp.net:8080/VWServlet/Bite" +"?p1="+myTagId+"&p2="+username});
+				 first=false;
+			 } 
+			 else task.execute(new String[] { "http://yohack2014.cloudapp.net:8080/VWServlet/Bite" +"?p1="+myTagId+"&p2="+biteTagId});
 		 }
 	}
 	
@@ -81,6 +88,8 @@ public class MainActivity extends Activity{
 	private void findViewsById() { 
 	    outputText1 = (TextView) findViewById(R.id.textView1);
 	    outputText2 = (TextView) findViewById(R.id.textView2);
+	    yousername = (TextView) findViewById(R.id.editText1);
+	    setusername = (Button) findViewById(R.id.button1);
 	}
 	
 	private class GetXMLTask extends AsyncTask<String, Void, String> {
@@ -157,6 +166,11 @@ public class MainActivity extends Activity{
         }
 		findViewsById();
 		
+		setusername.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	username=yousername.getText().toString();
+            }
+        });
 		
 	    handleIntent(getIntent());
 	}
